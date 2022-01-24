@@ -97,7 +97,6 @@ library("ggsignif")
 p2_ltmB <- p_ltmB + geom_signif(comparisons = list(c("WT", "pro41")),
                                 test = "t.test",
                                 na.rm = FALSE,
-                                map_signif_level = c("****" = 0.0001, "***" = 0.001, "**" = 0.01, "*" = 0.05),
                                 y_position = yRoof_ltmB*0.9)
 p2_ltmB
 
@@ -250,6 +249,7 @@ library("ggsignif")
 p2_ltmE <- p_ltmE + geom_signif(comparisons = list(c("WT", "pro41")),
                                 test = "t.test",
                                 na.rm = FALSE,
-                                map_signif_level = c("****" = 0.0001, "***" = 0.001, "**" = 0.01, "*" = 0.05),
                                 y_position = yRoof_ltmE*0.9)
 p2_ltmE
+t.test(x=d_ltmE[1:3, 2], y=d_ltmE[4:6, 2], var.equal=T,paired=F)
+var.test(x=d_ltmE_WT, y=d_ltmE_pro41)
