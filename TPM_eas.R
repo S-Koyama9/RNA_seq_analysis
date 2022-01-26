@@ -227,11 +227,27 @@ p2_easD <- p_easD + geom_signif(comparisons = list(c("WT", "pro41")),
                                 y_position = yRoof_easD*0.9)
 p2_easD
 
-
-
-
-
-
+d_lpsA <- d_TPM[242:247,] 
+yRoof_lpsA <- round(max(d_lpsA[,2])*1.2,1) 
+p_lpsA <- ggplot(d_lpsA, aes(x=strain, y=TPM)) + geom_boxplot(width = 0.4)
+p_lpsA <- p_lpsA + scale_x_discrete(limit=c('WT', 'pro41'))
+p_lpsA <- p_lpsA + ylim(0,yRoof_lpsA)
+p_lpsA <- p_lpsA + theme_classic()
+p_lpsA <- p_lpsA + ggtitle("lpsA")
+p_lpsA <- p_lpsA + labs(
+  y = "TPM", x= "", 
+)+
+  theme(
+    axis.title = element_text(size = 14)
+  )
+p_lpsA
+library("ggsignif")
+p2_lpsA <- p_lpsA + geom_signif(comparisons = list(c("WT", "pro41")),
+                                test = "t.test",
+                                na.rm = FALSE,
+                                map_signif_level = c("****" = 0.0001, "***" = 0.001, "**" = 0.01, "*" = 0.05),
+                                y_position = yRoof_lpsA*0.9)
+p2_lpsA
 
 
 
