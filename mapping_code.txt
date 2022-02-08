@@ -1,0 +1,53 @@
+#quality check
+
+#Unzip raw sequence read files
+gzip -dv "WT-2_read1.fq/gz"
+gzip -dv "WT-2_Read2.fq.gz"
+
+#FastQC 
+conda install -c bioconda fastqc
+mkdir qc_reports
+fastqc -o qc_reports WT-2_Read1.fq
+fastqc -o qc_reports WT-2_Read2.fq
+
+
+#fastp_preprocessing
+fastp -i WT-2_Read1.fq -I WT-2_Read2.fq -3 -o WT-2_pair1.fq.gz -O WT-2_pair2.fq.gz -h report.WT2-R1.html -j report.WT2-R2.json -q 30 -n 10 -l 20 -w 12 
+
+#check the number of read
+conda install -c bioconda seqkit
+seqkit stats -T *.fq.gz  #devide by tab to utilize the results in Excel
+
+
+#mapping
+
+#convert the annotation 'gff file' to 'gtf file'
+gffread EfFl1_v3.1.gff -g EfeFl1_Epichloe_festucae_Fl1_35023690_v2.fna -E -T -o EfFl1_v3.1.gtf
+
+#mapping by using RSEM and hisat2
+#Linux
+conda install -c bioconda rsem
+conda install -c bioconda hisat2
+
+#indexing
+rsem-prepare-reference --gtf EfFl1_v3.1.gtf --hisat2-hca -p 10 EfeFl1_Epichloe_festucae_Fl1_35023690_v3.fna hisat2_index
+#mapping
+rsem-calculate-expression --paired-end -p 10 --hisat2-hca WT-2_pair1.fq WT-2_pair2.fq hisat2_index WT-2
+
+#check the number of mapped rreads
+conda install -c bioconda samtools
+samtools flagstats -@ 4 WT-1.transcript.bam
+
+#extract expected_count
+rsem-generate-data-matrix *genes.results > expected_count_pro41.txt
+
+#extract TPM
+cut -f 6 WT-2.genes.results > WT_rep1
+#repeat 2 samples with 3 replicates
+paste WT_rep1 WT_rep2 WT_rep3 pro41KO_rep1 pro41KO_rep2 pro41KO_rep3 > TPM_pro41.txt
+
+
+
+
+
+
